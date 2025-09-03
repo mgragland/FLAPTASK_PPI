@@ -28,27 +28,35 @@ for i = 1:numel(files)
     filename = files(i).name;
     % Construct the full file path
     filepath = fullfile(dataFolder, filename);
-    %load the filename 
+    %load the filename
     load(filepath)
-    clearvars -except condtr theans mixtr rispo theothershape respTime 
+    clearvars -except condtr theans mixtr rispo theothershape respTime
 
-% Part 2: Determine TRL Location 
-location_target=mixtr(:,2);
-for j=1:location_target
-    if location_target(i)==1 
-        location_left=i;
-    elseif location_target(i)==2
-        location_right=i;
+    %% Part 2: Determine TRL Location
+    % insert participant assignment table 
+
+    location_target=mixtr(:,2);
+    for j=1:location_target
+        if location_target(i)==1
+            location_left=i;
+        elseif location_target(i)==2
+            location_right=i;
+        end
     end
-end
 
-% Part 3: Sort based on trial type 
-[gabor_trials,pd_trials, egg_trials]=sort_trials(mixtr)
+    if TRL==1
+        att_location=location_left
+        unatt_location=location_right
+    elseif TRL==2
+        att_location=location_right
+        unatt_location=location_left
+    end
 
-% Part 3: Determine trials with correct answer based on attenteded vs
-% unattended location
-[trialtype_attended,trialtype_unattended] =attended_vs_unattended(gabor, att_location, unatt_location, rispo)
+    %% Part 3: Sort based on trial type
+    [gabor_trials,pd_trials, egg_trials]=sort_trials(mixtr)
 
+    %% Part 3: Determine trials with correct answer based on attended vs unattended location
+    [trialtype_attended,trialtype_unattended]=attended_vs_unattended(gabor_trials, att_location, unatt_location, rispo)
 
-%% Part 4: Build Design Matrix based on chosen parameters 
+    %% Part 4: Build Design Matrix based on chosen parameters
 end
