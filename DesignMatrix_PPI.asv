@@ -49,7 +49,7 @@ for N=1:2
         filepath = fullfile(dataFolder, filename);
         %load the filename
         load(filepath)
-        clearvars -except subject gabor_URL_cue_session gabor_TRL_cue_session gabor_URL_condition_session  gabor_TRL_condition_session TRL condtr theans mixtr rispo theothershape respTime num_run files CueOnsetTime stim_start_frame startTime savefigures dataFolder remove_session gabor_TRL_session gabor_URL_session N savedata CueOnsetTime
+        clearvars -except subject gabor_URL_condition_session  gabor_TRL_condition_session TRL condtr theans mixtr rispo theothershape respTime num_run files CueOnsetTime stim_start_frame startTime savefigures dataFolder remove_session gabor_TRL_session gabor_URL_session N savedata CueOnsetTime
 
         %% Part 3: Sort based on trial type
         [gabor_trials,pd_trials, eggs_trials]=sort_trials(mixtr)
@@ -73,7 +73,7 @@ for N=1:2
         gabor_URL_condition_session(1,:,num_run)=gabor_URL_condition;
 
 
-        [gabor_TRL_cue, gabor_URL_cue]=create_cue_condition_matrix(gabor_TRL, gabor_URL, CueOnsetTime, startTime)
+        [gabor_TRL_cue, gabor_URL_cue]=create_cue_condition_matrix(gabor_TRL, gabor_URL, stim_start_frame, CueOnsetTime)
         gabor_TRL_cue_session(1,:,num_run)=gabor_TRL_cue;
         gabor_URL_cue_session(1,:,num_run)=gabor_URL_cue;
     end
