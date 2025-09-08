@@ -49,7 +49,7 @@ for N=1:2
         filepath = fullfile(dataFolder, filename);
         %load the filename
         load(filepath)
-        clearvars -except subject TRL condtr theans mixtr rispo theothershape respTime num_run files savefigures dataFolder remove_session gabor_TRL_session gabor_URL_session N savedata
+        clearvars -except subject TRL condtr theans mixtr rispo theothershape respTime num_run files savefigures dataFolder remove_session gabor_TRL_session gabor_URL_session N savedata CueOnsetTime
 
         %% Part 3: Sort based on trial type
         [gabor_trials,pd_trials, eggs_trials]=sort_trials(mixtr)
@@ -68,6 +68,8 @@ for N=1:2
         eggs_URL_session(:,:,num_run)=eggs_URL;
 
         %% Part 4: Build Design Matrix based on chosen parameters
+        [attended_condition, unattended_condition]=create_condition_matrix(trialtype, mixtr)
+        [attended_cue, unattended_cue]=create_cue_condition_matrix(trialtype, CueOnsetTime)
     end
     %% Graph Accuracy
     graph_accuracy(gabor_TRL_session,gabor_URL_session, num_run, remove_session, 'Gabor', savedata, N, subject, savefigures);
