@@ -18,6 +18,9 @@ addpath(['C:\Users\raglandm\Desktop\FLAP DATA']);
 pt_assignment=table2cell(readtable('ParticipantAssignmentsUAB_corr'));
 TRL=ptassignmenttable(subject, pt_assignment); %TRL=1 is LEFT and TRL=2 is RIGHT
 
+%% Determine Number of TR/volumes collected 
+[num_vol]=vol_calc(TR, TRwait)
+
 %% Part 2: Import Data and Clear Irrelevant Variables in Workspace
 for N=1:2
     if N==1
@@ -68,9 +71,12 @@ for N=1:2
         eggs_URL_session(:,:,num_run)=eggs_URL;
 
         %% Part 4: Build Design Matrix based on chosen parameters
-        [gabor_TRL_condition, gabor_URL_condition]=create_condition_matrix(gabor_TRL, gabor_URL, stim_start_frame, startTime)
+        [gabor_TRL_condition, gabor_URL_condition, TRL_condition_matrix, URL_condition_matrix]=create_condition_matrix(gabor_TRL, gabor_URL, stim_start_frame, startTime, vol_times)
         gabor_TRL_condition_session(1,:,num_run)=gabor_TRL_condition;
+        gabor_TRL_condition_session(2,:,num_run)=TRL_condition_matrix;
         gabor_URL_condition_session(1,:,num_run)=gabor_URL_condition;
+        gabor_URL_condition_session(2,:,num_run)=URL_condition_matrix;
+
 
 
         [gabor_TRL_cue, gabor_URL_cue]=create_cue_condition_matrix(gabor_TRL, gabor_URL, CueOnsetTime, startTime)
