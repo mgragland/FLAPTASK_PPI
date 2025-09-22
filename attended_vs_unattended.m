@@ -2,11 +2,11 @@
 % the TRL/URL location 
 function [trialtype_TRL,trialtype_URL] =attended_vs_unattended(trialtype, TRL, rispo)
 if TRL==1
-        TRL_location=trialtype{1}
-        URL_location=trialtype{2}
+        TRL_location=trialtype{1};
+        URL_location=trialtype{2};
     elseif TRL==2
-        TRL_location=trialtype{2}
-        URL_location=trialtype{1}
+        TRL_location=trialtype{2};
+        URL_location=trialtype{1};
 end
 
     

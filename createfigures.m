@@ -3,9 +3,9 @@ function createfigures(loadedData, trialtype, total_correct_TRL, total_correct_U
 figure
 x=1:2;
 y=[loadedData.total_correct_TRL, total_correct_TRL; loadedData.total_correct_URL, total_correct_URL];
-b=bar(x,y)
-ylim([0,1.1])
-xticks([1 2])
+b=bar(x,y);
+ylim([0,1.1]);
+xticks([1 2]);
 xticklabels({'TRL', 'URL'})
 ylabel('Percentage Correct')
 if strcmp(trialtype, 'Gabor')

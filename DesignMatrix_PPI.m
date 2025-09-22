@@ -17,9 +17,8 @@ savedata=['C:\Users\raglandm\Desktop\FLAP DATA\MRI_Behavior\Analyzed\' subject '
 addpath(['C:\Users\raglandm\Desktop\FLAP DATA']);
 pt_assignment=table2cell(readtable('ParticipantAssignmentsUAB_corr'));
 TRL=ptassignmenttable(subject, pt_assignment); %TRL=1 is LEFT and TRL=2 is RIGHT
-
-%% Determine Number of TR/volumes collected 
-[num_vol]=vol_calc(TR, TRwait)
+total_time=188*1.5;
+vol_times=1:1.5:total_time;
 
 %% Part 2: Import Data and Clear Irrelevant Variables in Workspace
 for N=1:2
@@ -38,7 +37,6 @@ for N=1:2
 
     relevantFiles={};
 
-
     % Loop through each file
     for num_run = 1:numel(files)
         if num_run==remove_session
@@ -52,41 +50,48 @@ for N=1:2
         filepath = fullfile(dataFolder, filename);
         %load the filename
         load(filepath)
-        clearvars -except subject gabor_URL_cue_session gabor_TRL_cue_session gabor_URL_condition_session  gabor_TRL_condition_session TRL condtr theans mixtr rispo theothershape respTime num_run files CueOnsetTime stim_start_frame startTime savefigures dataFolder remove_session gabor_TRL_session gabor_URL_session N savedata CueOnsetTime
+        clearvars -except totalduration vol_times subject num_vol gabor_URL_cue_session gabor_TRL_cue_session gabor_URL_condition_session  gabor_TRL_condition_session TRL condtr theans mixtr rispo theothershape respTime num_run files CueOnsetTime stim_start_frame startTime savefigures dataFolder remove_session gabor_TRL_session gabor_URL_session N savedata CueOnsetTime
 
         %% Part 3: Sort based on trial type
-        [gabor_trials,pd_trials, eggs_trials]=sort_trials(mixtr)
+        [gabor_trials,pd_trials, eggs_trials]=sort_trials(mixtr);
 
         %% Part 4: Determine trials with correct answer based on TRL vs URL location
-        [gabor_TRL,gabor_URL]=attended_vs_unattended(gabor_trials,TRL, rispo)
+        [gabor_TRL,gabor_URL]=attended_vs_unattended(gabor_trials,TRL, rispo);
         gabor_TRL_session(:,:,num_run)=gabor_TRL;
         gabor_URL_session(:,:,num_run)=gabor_URL;
 
-        [pd_TRL,pd_URL]=attended_vs_unattended(pd_trials,TRL, rispo)
+        [pd_TRL,pd_URL]=attended_vs_unattended(pd_trials,TRL, rispo);
         pd_TRL_session(:,:,num_run)=pd_TRL;
         pd_URL_session(:,:,num_run)=pd_URL;
 
-        [eggs_TRL,eggs_URL]=attended_vs_unattended(eggs_trials,TRL, rispo)
+        [eggs_TRL,eggs_URL]=attended_vs_unattended(eggs_trials,TRL, rispo);
         eggs_TRL_session(:,:,num_run)=eggs_TRL;
         eggs_URL_session(:,:,num_run)=eggs_URL;
 
         %% Part 4: Build Design Matrix based on chosen parameters
-        [gabor_TRL_condition, gabor_URL_condition, TRL_condition_matrix, URL_condition_matrix]=create_condition_matrix(gabor_TRL, gabor_URL, stim_start_frame, startTime, vol_times)
-        gabor_TRL_condition_session(1,:,num_run)=gabor_TRL_condition;
-        gabor_TRL_condition_session(2,:,num_run)=TRL_condition_matrix;
-        gabor_URL_condition_session(1,:,num_run)=gabor_URL_condition;
-        gabor_URL_condition_session(2,:,num_run)=URL_condition_matrix;
+        [TRL_condition_matrix, URL_condition_matrix]=create_condition_matrix(gabor_TRL, gabor_URL, stim_start_frame, startTime);
+        
+        % convert to TXT file
+        filename = sprintf('Gabor_TRL_event_%d.txt', num_run);
+        fullpath = fullfile(savedata, filename);  % Creates platform-independent path
+        writematrix(TRL_condition_matrix, fullpath, 'Delimiter', 'tab');
+
+        filename = sprintf('Gabor_URL_event_%d.txt', num_run);
+        fullpath = fullfile(savedata, filename);  % Creates platform-independent path
+        writematrix(URL_condition_matrix, fullpath, 'Delimiter', 'tab');
 
 
 
-        [gabor_TRL_cue, gabor_URL_cue]=create_cue_condition_matrix(gabor_TRL, gabor_URL, CueOnsetTime, startTime)
-        gabor_TRL_cue_session(1,:,num_run)=gabor_TRL_cue;
-        gabor_URL_cue_session(1,:,num_run)=gabor_URL_cue;
+%% cue not relevant for analysis
+%         [gabor_TRL_cue, gabor_URL_cue]=create_cue_condition_matrix(gabor_TRL, gabor_URL, CueOnsetTime, startTime)
+%         gabor_TRL_cue_session(1,:,num_run)=gabor_TRL_cue;
+%         gabor_URL_cue_session(1,:,num_run)=gabor_URL_cue;
     end
     %% Graph Accuracy
     graph_accuracy(gabor_TRL_session,gabor_URL_session, num_run, remove_session, 'Gabor', savedata, N, subject, savefigures);
     graph_accuracy(pd_TRL_session,pd_URL_session, num_run, remove_session, 'P/D', savedata, N, subject, savefigures);
     graph_accuracy(eggs_TRL_session,eggs_URL_session, num_run, remove_session, 'Eggs', savedata, N, subject, savefigures);
 end
+
 
 
