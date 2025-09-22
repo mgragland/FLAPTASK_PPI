@@ -1,4 +1,4 @@
-function  [TRL_condition_matrix, URL_condition_matrix]=create_condition_matrix(trialtype_TRL, trialtype_URL, stim_start_frame, startTime, totalduration_session, num_run, concat);
+function  [TRL_condition_matrix, URL_condition_matrix]=create_condition_matrix(trialtype_TRL, trialtype_URL, stim_start_frame, startTime, totalduration_session, num_run, concat, stimulustype);
 % stim_start_frame=stimulus presentation time in Datapixx time
 %ExpStarttimeD=first flip after the trigger in datapixx clock time
 %TrialStartTimeD=JitterEndTimeD=Trial start time in datapixx clock time
@@ -21,12 +21,21 @@ end
 TRL_condition_matrix=zeros(length(TRL_condition), 3);
 TRL_condition_matrix(:,1)=TRL_condition';
 TRL_condition_matrix(:,2)=0.2;
-TRL_condition_matrix(:,3)=1;
+
+if stimulustype==2;
+    TRL_condition_matrix(:,3)=0;
+else
+    TRL_condition_matrix(:,3)=1;
+end
 
 URL_condition_matrix=zeros(length(URL_condition), 3);
 URL_condition_matrix(:,1)=URL_condition';
 URL_condition_matrix(:,2)=0.2;
-URL_condition_matrix(:,3)=1;
+if stimulustype==2;
+    URL_condition_matrix(:,3)=0;
+else
+    URL_condition_matrix(:,3)=1;
+end
 end
 
 
