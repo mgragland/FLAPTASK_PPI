@@ -10,15 +10,20 @@
 
 
 subject='fb1009'
+concat=1;
 savefigures = ['C:\Users\raglandm\Desktop\FLAP DATA\MRI_Behavior\Analyzed\' subject '\plots'];
 savedata=['C:\Users\raglandm\Desktop\FLAP DATA\MRI_Behavior\Analyzed\' subject '\data'];
+
+
+
+
+
 %% Part 1: Determine TRL Location
 % Add Participant Assignment Table:
 addpath(['C:\Users\raglandm\Desktop\FLAP DATA']);
 pt_assignment=table2cell(readtable('ParticipantAssignmentsUAB_corr'));
 TRL=ptassignmenttable(subject, pt_assignment); %TRL=1 is LEFT and TRL=2 is RIGHT
-total_time=188*1.5;
-vol_times=1:1.5:total_time;
+
 
 %% Part 2: Import Data and Clear Irrelevant Variables in Workspace
 for N=1:2
@@ -27,10 +32,24 @@ for N=1:2
         dataFolder = ['C:\Users\raglandm\Desktop\FLAP DATA\MRI_Behavior\Raw_Data\'  subject '\pre'];
         % If any sessions need to be removed
         remove_session=5;
+        run_num='pre';
+
+        % Intitialize Variables
+        total_time=188*1.5;
+        vol_times=1:1.5:total_time;
+        count=0;
+        totalduration_session=[];
     elseif N==2
-        clearvars -except subject TRL savefigures savedata N
+        clearvars -except subject TRL savefigures savedata N concat
         dataFolder = ['C:\Users\raglandm\Desktop\FLAP DATA\MRI_Behavior\Raw_Data\'  subject '\post'];
         remove_session=0;
+        run_num='post';
+
+        % Intitialize Variables
+       total_time=188*1.5;
+        vol_times=1:1.5:total_time;
+        count=0;
+        totalduration_session=[];
     end
     % Get a list of all files in the folder
     files = dir(fullfile(dataFolder, '*.mat')); % Change '*.txt' to match the file extension of your data
@@ -50,7 +69,17 @@ for N=1:2
         filepath = fullfile(dataFolder, filename);
         %load the filename
         load(filepath)
-        clearvars -except totalduration vol_times subject num_vol gabor_URL_cue_session gabor_TRL_cue_session gabor_URL_condition_session  gabor_TRL_condition_session TRL condtr theans mixtr rispo theothershape respTime num_run files CueOnsetTime stim_start_frame startTime savefigures dataFolder remove_session gabor_TRL_session gabor_URL_session N savedata CueOnsetTime
+        count=count+1;
+        clearvars -except N concat count totalduration totalduration_session run_num vol_times subject num_vol gabor_URL_cue_session gabor_TRL_cue_session gabor_URL_condition_session  gabor_TRL_condition_session TRL condtr theans mixtr rispo theothershape respTime num_run files CueOnsetTime stim_start_frame startTime savefigures dataFolder remove_session gabor_TRL_session gabor_URL_session N savedata CueOnsetTime
+
+        % if concatenating, change timeduration
+         if concat==1
+             if num_run==1
+                 totalduration_session(end+1)=totalduration*60;
+             else
+                 totalduration_session(end+1)=(totalduration_session(count-1)+(totalduration*60)); 
+             end
+         end
 
         %% Part 3: Sort based on trial type
         [gabor_trials,pd_trials, eggs_trials]=sort_trials(mixtr);
@@ -69,15 +98,17 @@ for N=1:2
         eggs_URL_session(:,:,num_run)=eggs_URL;
 
         %% Part 4: Build Design Matrix based on chosen parameters
-        [TRL_condition_matrix, URL_condition_matrix]=create_condition_matrix(gabor_TRL, gabor_URL, stim_start_frame, startTime);
-        
+       [TRL_condition_matrix, URL_condition_matrix]=create_condition_matrix(gabor_TRL, gabor_URL, stim_start_frame, startTime, totalduration_session, num_run, concat);
+
         % convert to TXT file
         filename = sprintf('Gabor_TRL_event_%d.txt', num_run);
-        fullpath = fullfile(savedata, filename);  % Creates platform-independent path
+        savedata_TRL=['C:\Users\raglandm\Desktop\FLAP DATA\MRI_Behavior\Analyzed\' subject '\data\txt\' run_num '\TRL'];
+        fullpath = fullfile(savedata_TRL, filename);  % Creates platform-independent path
         writematrix(TRL_condition_matrix, fullpath, 'Delimiter', 'tab');
 
         filename = sprintf('Gabor_URL_event_%d.txt', num_run);
-        fullpath = fullfile(savedata, filename);  % Creates platform-independent path
+        savedata_URL=['C:\Users\raglandm\Desktop\FLAP DATA\MRI_Behavior\Analyzed\' subject '\data\txt\' run_num '\URL'];
+        fullpath = fullfile(savedata_URL, filename);  % Creates platform-independent path
         writematrix(URL_condition_matrix, fullpath, 'Delimiter', 'tab');
 
 
