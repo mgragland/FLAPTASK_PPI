@@ -10,10 +10,13 @@
 
 
 subject='fb1009'
+
+% Whether or not to concatenate the runs AND/OR to keep the CI stimuli nonsepcific (include both eggs and PD) 
 concat=1;
 CI_nonspecific=1;
 
 
+% Establish paths for saved figures and saved data
 savefigures = ['C:\Users\raglandm\Desktop\FLAP DATA\MRI_Behavior\Analyzed\' subject '\plots'];
 savedata=['C:\Users\raglandm\Desktop\FLAP DATA\MRI_Behavior\Analyzed\' subject '\data'];
 
@@ -21,12 +24,12 @@ savedata=['C:\Users\raglandm\Desktop\FLAP DATA\MRI_Behavior\Analyzed\' subject '
 % Add Participant Assignment Table:
 addpath(['C:\Users\raglandm\Desktop\FLAP DATA']);
 pt_assignment=table2cell(readtable('ParticipantAssignmentsUAB_corr'));
-TRL=ptassignmenttable(subject, pt_assignment); %TRL=1 is LEFT and TRL=2 is RIGHT
+TRL=ptassignmenttable(subject, pt_assignment); %TRL=1 is LEFT and TRL=2 is RIGHT CHECK WITH PINAR
 
 
 %% Part 2: Import Data and Clear Irrelevant Variables in Workspace
 for N=1:2
-    if N==1
+    if N==1 % Import the "Pre" Session
         % Specify the directory containing your data
         dataFolder = ['C:\Users\raglandm\Desktop\FLAP DATA\MRI_Behavior\Raw_Data\'  subject '\pre'];
         % If any sessions need to be removed
@@ -38,6 +41,7 @@ for N=1:2
         vol_times=1:1.5:total_time;
         count=0;
         totalduration_session=[];
+        
     elseif N==2
         clearvars -except subject TRL savefigures savedata N concat CI_nonspecific
         dataFolder = ['C:\Users\raglandm\Desktop\FLAP DATA\MRI_Behavior\Raw_Data\'  subject '\post'];
@@ -133,7 +137,7 @@ for N=1:2
         writematrix(URL_condition_matrix, fullpath, 'Delimiter', 'tab');
 
 
-%% cue not relevant for analysis
+%% cue not relevant for this analysis
 %         [gabor_TRL_cue, gabor_URL_cue]=create_cue_condition_matrix(gabor_TRL, gabor_URL, CueOnsetTime, startTime)
 %         gabor_TRL_cue_session(1,:,num_run)=gabor_TRL_cue;
 %         gabor_URL_cue_session(1,:,num_run)=gabor_URL_cue;
