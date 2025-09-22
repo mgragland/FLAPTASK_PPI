@@ -61,17 +61,15 @@ for N=1:2
 
     % Loop through each file
     for num_run = 1:numel(files)
-        if num_run==remove_session
+        if num_run==remove_session % do not run this session 
             gabor_TRL_session(3,1,num_run)=0;
             gabor_URL_session(3,1,num_run)=0;
             continue
         end
-        % Get the file name
-        filename = files(num_run).name;
-        % Construct the full file path
-        filepath = fullfile(dataFolder, filename);
-        %load the filename
-        load(filepath)
+    
+        filename = files(num_run).name;    % Get the file name
+        filepath = fullfile(dataFolder, filename);  % Construct the full file path
+        load(filepath)   %load the filename
         count=count+1;
         clearvars -except N CI_nonspecific concat count CI_nonspecific totalduration totalduration_session run_num vol_times subject num_vol gabor_URL_cue_session gabor_TRL_cue_session gabor_URL_condition_session  gabor_TRL_condition_session TRL condtr theans mixtr rispo theothershape respTime num_run files CueOnsetTime stim_start_frame startTime savefigures dataFolder remove_session gabor_TRL_session gabor_URL_session N savedata CueOnsetTime
 
@@ -85,7 +83,7 @@ for N=1:2
          end
 
         %% Part 3: Sort based on trial type
-        [gabor_trials,pd_trials, eggs_trials]=sort_trials(mixtr);
+        [gabor_trials,pd_trials, eggs_trials]=sort_trials(mixtr); %sort trials based on stimulus type
 
         %% Part 4: Determine trials with correct answer based on TRL vs URL location
         [gabor_TRL,gabor_URL]=attended_vs_unattended(gabor_trials,TRL, rispo);
@@ -93,27 +91,29 @@ for N=1:2
         gabor_URL_session(:,:,num_run)=gabor_URL;
 
         [pd_TRL,pd_URL]=attended_vs_unattended(pd_trials,TRL, rispo);
-        pd_TRL_trials= pd_TRL(1,:);
-        pd_URL_trials= pd_URL(1,:);
-        pd_TRL_session(:,:,num_run)=pd_TRL;
+        pd_TRL_trials= pd_TRL(1,:); % only take the trial index
+        pd_URL_trials= pd_URL(1,:); % only take the trial index
+        pd_TRL_session(:,:,num_run)=pd_TRL; % store across run number
         pd_URL_session(:,:,num_run)=pd_URL;
        
 
 
         [eggs_TRL,eggs_URL]=attended_vs_unattended(eggs_trials,TRL, rispo);
-        eggs_TRL_trials= eggs_TRL(1,:);
+        eggs_TRL_trials= eggs_TRL(1,:); % only take the trial index
         eggs_URL_trials= eggs_URL(1,:);
-        eggs_TRL_session(:,:,num_run)=eggs_TRL;
+        eggs_TRL_session(:,:,num_run)=eggs_TRL; % store across run number
         eggs_URL_session(:,:,num_run)=eggs_URL;
 
         %% Part 4: Build Design Matrix based on Gabor
-        if CI_nonspecific==1
-            CI_TRL=sort([pd_TRL_trials, eggs_TRL_trials])
-            CI_URL=sort([pd_URL_trials, eggs_URL_trials])
+        if CI_nonspecific==1 %combine PD and egg trials into one vector
+            CI_TRL=sort([pd_TRL_trials, eggs_TRL_trials]) % sort based on trial index
+            CI_URL=sort([pd_URL_trials, eggs_URL_trials]) % sort base don trial index
         end
 
+        % Gabor Stimulus 
         [TRL_condition_matrix, URL_condition_matrix]=create_condition_matrix(gabor_TRL, gabor_URL, stim_start_frame, startTime, totalduration_session, num_run, concat, 1);
-        % convert to TXT file
+       
+        % convert to TXT file which is what SPM will expect
         filename = sprintf('Gabor_TRL_event_%d.txt', num_run);
         savedata_TRL=['C:\Users\raglandm\Desktop\FLAP DATA\MRI_Behavior\Analyzed\' subject '\data\txt\' run_num '\TRL'];
         fullpath = fullfile(savedata_TRL, filename);  % Creates platform-independent path
@@ -124,8 +124,10 @@ for N=1:2
         fullpath = fullfile(savedata_URL, filename);  % Creates platform-independent path
         writematrix(URL_condition_matrix, fullpath, 'Delimiter', 'tab');
 
-        % CI
+        % CI Stimulus
         [TRL_condition_matrix, URL_condition_matrix]=create_condition_matrix(CI_TRL, CI_URL, stim_start_frame, startTime, totalduration_session, num_run, concat, 2);        % convert to TXT file
+
+        % convert to TXT file which is what SPM will expect
         filename = sprintf('CI_TRL_event_%d.txt', num_run);
         savedata_TRL=['C:\Users\raglandm\Desktop\FLAP DATA\MRI_Behavior\Analyzed\' subject '\data\txt\' run_num '\TRL'];
         fullpath = fullfile(savedata_TRL, filename);  % Creates platform-independent path
@@ -137,10 +139,10 @@ for N=1:2
         writematrix(URL_condition_matrix, fullpath, 'Delimiter', 'tab');
 
 
-%% cue not relevant for this analysis
-%         [gabor_TRL_cue, gabor_URL_cue]=create_cue_condition_matrix(gabor_TRL, gabor_URL, CueOnsetTime, startTime)
-%         gabor_TRL_cue_session(1,:,num_run)=gabor_TRL_cue;
-%         gabor_URL_cue_session(1,:,num_run)=gabor_URL_cue;
+         %  cue not relevant for this analysis
+         %        [gabor_TRL_cue, gabor_URL_cue]=create_cue_condition_matrix(gabor_TRL, gabor_URL, CueOnsetTime, startTime)
+         %        gabor_TRL_cue_session(1,:,num_run)=gabor_TRL_cue;
+         %        gabor_URL_cue_session(1,:,num_run)=gabor_URL_cue;
     end
     %% Graph Accuracy
     graph_accuracy(gabor_TRL_session,gabor_URL_session, num_run, remove_session, 'Gabor', savedata, N, subject, savefigures);

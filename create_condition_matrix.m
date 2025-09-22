@@ -6,11 +6,11 @@ function  [TRL_condition_matrix, URL_condition_matrix]=create_condition_matrix(t
 %stimulusduration=0.200
 
 % finding the stimulus onset time of the trials 
-stim_start_time=stim_start_frame-startTime;
-index_trial_type_attended=trialtype_TRL(1,:);
-index_trial_type_unattended=trialtype_URL(1,:);
-TRL_condition=stim_start_time(index_trial_type_attended);
-URL_condition=stim_start_time(index_trial_type_unattended);
+stim_start_time=stim_start_frame-startTime; % stimulus start time for all trials (in Datapixx Time) - beginning of trials (in Datapixx Time)
+index_trial_type_TRL=trialtype_TRL(1,:);
+index_trial_type_URL=trialtype_URL(1,:);
+TRL_condition=stim_start_time(index_trial_type_TRL); %stimulus start time for TRL trials 
+URL_condition=stim_start_time(index_trial_type_URL); % stimulus start time for URL trials 
 
 if concat==1 
     TRL_condition=concatenate_files(TRL_condition, totalduration_session, num_run)
@@ -22,7 +22,7 @@ TRL_condition_matrix=zeros(length(TRL_condition), 3);
 TRL_condition_matrix(:,1)=TRL_condition';
 TRL_condition_matrix(:,2)=0.2;
 
-if stimulustype==2;
+if stimulustype==2 %if stimulus type is CI then in event matrix, third column=0 becuase not interested in these trials
     TRL_condition_matrix(:,3)=0;
 else
     TRL_condition_matrix(:,3)=1;

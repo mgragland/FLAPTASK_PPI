@@ -4,6 +4,7 @@ gabor_trials={};
 egg_trials={};
 pd_trials={};
 
+% Attending to Left vs Right
 gabor_left=[];
 gabor_right=[];
 eggs_left=[];

@@ -10,14 +10,13 @@ if TRL==1
 end
 
     
+trialtype_TRL(1,:)=TRL_location; % Trials at that location 
+trialtype_TRL(2,:)=rispo(TRL_location); % Correct vs Incorrect Responses 
+trialtype_TRL(3,1) =sum(trialtype_TRL(2,:) == 1); % Number of Correct Responses
 
-trialtype_TRL(1,:)=TRL_location;
-trialtype_TRL(2,:)=rispo(TRL_location);
-trialtype_TRL(3,1) =sum(trialtype_TRL(2,:) == 1);
-
-trialtype_URL(1,:)=URL_location;
-trialtype_URL(2,:)=rispo(URL_location);
-trialtype_URL(3,1) =sum(trialtype_URL(2,:) == 1);
+trialtype_URL(1,:)=URL_location; % Trials at that Location
+trialtype_URL(2,:)=rispo(URL_location); % Correct vs Incorrect Responses 
+trialtype_URL(3,1) =sum(trialtype_URL(2,:) == 1); % Number of Correct Responses
 end
 
 
