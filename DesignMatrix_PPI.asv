@@ -45,9 +45,6 @@ for N=1:2
         CI_URL_across_sessions=[];
         gabor_TRL_across_sessions=[];
         gabor_URL_across_sessions=[];
-        block_matrix_sessions=[];
-    
-
         
     elseif N==2
         clearvars -except subject TRL savefigures savedata N concat CI_nonspecific
@@ -64,7 +61,6 @@ for N=1:2
         CI_URL_across_sessions=[];
         gabor_TRL_across_sessions=[];
         gabor_URL_across_sessions=[];
-        block_matrix_sessions=[];
 
     end
     % Get a list of all files in the folder
@@ -84,7 +80,7 @@ for N=1:2
         filepath = fullfile(dataFolder, filename);  % Construct the full file path
         load(filepath)   %load the filename
         count=count+1;
-        clearvars -except N CI_nonspecific block_matrix_sessions CI_URL_across_sessions CI_TRL_across_sessions gabor_URL_across_sessions gabor_TRL_across_sessions concat count CI_nonspecific totalduration totalduration_session run_num vol_times subject num_vol gabor_URL_cue_session gabor_TRL_cue_session gabor_URL_condition_session  gabor_TRL_condition_session TRL condtr theans mixtr rispo theothershape respTime num_run files CueOnsetTime stim_start_frame startTime savefigures dataFolder remove_session gabor_TRL_session gabor_URL_session N savedata CueOnsetTime
+        clearvars -except N CI_nonspecific CI_URL_across_sessions CI_TRL_across_sessions gabor_URL_across_sessions gabor_TRL_across_sessions concat count CI_nonspecific totalduration totalduration_session run_num vol_times subject num_vol gabor_URL_cue_session gabor_TRL_cue_session gabor_URL_condition_session  gabor_TRL_condition_session TRL condtr theans mixtr rispo theothershape respTime num_run files CueOnsetTime stim_start_frame startTime savefigures dataFolder remove_session gabor_TRL_session gabor_URL_session N savedata CueOnsetTime
 
         % if concatenating, change timeduration
          if concat==1
@@ -95,17 +91,8 @@ for N=1:2
              end
          end
 
-
-        %% Part 3A Build Block Matrix 
-        [block_matrix]=build_block_matrix(mixtr);
-
-
-        if concat==1
-            block_matrix_sessions=vertcat([block_matrix_sessions,block_matrix']);
-        end
-        %% Part 3B: Sort based on trial type
+        %% Part 3: Sort based on trial type
         [gabor_trials,pd_trials, eggs_trials]=sort_trials(mixtr); %sort trials based on stimulus type
-    
 
         %% Part 4: Determine trials with correct answer based on TRL vs URL location
         [gabor_TRL,gabor_URL]=attended_vs_unattended(gabor_trials,TRL, rispo);
@@ -165,18 +152,18 @@ for N=1:2
         writematrix(gabor_TRL_across_sessions, fullpath, 'Delimiter', 'tab');
 
         filename = sprintf('Gabor_URL_events_concat');
-        savedata_URL=['C:\Users\raglandm\Desktop\FLAP DATA\MRI_Behavior\Analyzed\' subject '\data\txt\' run_num '\URL'];
+        savedata_URL=['C:\Users\raglandm\Desktop\FLAP DATA\MRI_Behavior\Analyzed\' subject '\data\txt\URL'];
         fullpath = fullfile(savedata_URL, filename);  % Creates platform-independent path
         writematrix(gabor_URL_across_sessions, fullpath, 'Delimiter', 'tab');
 
         % convert to TXT file which is what SPM will expect
         filename = sprintf('CI_TRL_events_concat');
-        savedata_TRL=['C:\Users\raglandm\Desktop\FLAP DATA\MRI_Behavior\Analyzed\' subject '\data\txt\' run_num '\TRL'];
+        savedata_TRL=['C:\Users\raglandm\Desktop\FLAP DATA\MRI_Behavior\Analyzed\' subject '\data\txt\TRL'];
         fullpath = fullfile(savedata_TRL, filename);  % Creates platform-independent path
         writematrix(CI_TRL_across_sessions, fullpath, 'Delimiter', 'tab');
 
         filename = sprintf('CI_URL_events_concat');
-        savedata_URL=['C:\Users\raglandm\Desktop\FLAP DATA\MRI_Behavior\Analyzed\' subject '\data\txt\' run_num '\URL'];
+        savedata_URL=['C:\Users\raglandm\Desktop\FLAP DATA\MRI_Behavior\Analyzed\' subject '\data\txt\URL'];
         fullpath = fullfile(savedata_URL, filename);  % Creates platform-independent path
         writematrix(CI_URL_across_sessions, fullpath, 'Delimiter', 'tab');
 

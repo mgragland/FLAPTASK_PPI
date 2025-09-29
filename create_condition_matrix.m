@@ -14,6 +14,7 @@ URL_condition=stim_start_time(index_trial_type_URL); % stimulus start time for U
 
 if concat==1 
     TRL_condition=concatenate_files(TRL_condition, totalduration_session, num_run)
+    URL_condition=concatenate_files(URL_condition, totalduration_session, num_run)
 end
 
 % creating the design matrix to indicate 0 for no trial in that volume and
